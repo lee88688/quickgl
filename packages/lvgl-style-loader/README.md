@@ -1,6 +1,6 @@
 # `lvgl-style-loader`
 
-> TODO: description
+transform css to lvgl style struct. lvgl style is similar to css. only a subset of css is supported.
 
 ## Usage
 

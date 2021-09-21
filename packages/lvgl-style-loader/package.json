@@ -19,6 +19,15 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "loader-utils": "^2.0.0",
+    "parse-css-dimension": "^1.1.0",
+    "parse-css-sides": "^3.0.1",
+    "postcss": "^8.3.6",
+    "postcss-selector-parser": "^6.0.6",
+    "postcss-value-parser": "^4.1.0"
+  },
+  "devDependencies": {
+    "webpack": "^5.53.0"
+  }
 }
