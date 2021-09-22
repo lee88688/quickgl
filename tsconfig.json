@@ -1,7 +1,7 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "target": "ES2018",
-    "lib": ["ES2018"]
-  }
+  "references": [
+    {
+      "path": "./packages/lvgl-style-loader"
+    }
+  ]
 }

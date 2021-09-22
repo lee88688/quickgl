@@ -17,7 +17,7 @@
     "registry": "https://registry.npm.taobao.org/"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "jest"
   },
   "dependencies": {
     "loader-utils": "^2.0.0",

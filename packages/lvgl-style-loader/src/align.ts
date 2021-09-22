@@ -173,7 +173,7 @@ interface StyleItem {
 
 const selectorProcessor = selectorPaser();
 
-function transform(rule: Rule): StyleItem {
+export function transform(rule: Rule): StyleItem {
   const selectorAst = selectorProcessor.astSync(rule.selector);
   let selector: selectorPaser.Selector | null = null;
   if (selectorAst.nodes.length) {
