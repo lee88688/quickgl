@@ -74,13 +74,13 @@ const attributeAlignConfig: Record<string, StaticAlign | DynamicAlign> = {
   }
 }
 
-function attributeTransform(decl: Declaration): {name: string, value: string}[] {
+function attributeTransform(decl: Declaration, alignConfig: Record<string, StaticAlign | DynamicAlign>): {name: string, value: string}[] {
   const lineInfo = `line(${decl?.source?.start.line})`;
-  if (!(decl.prop in attributeAlignConfig)) {
+  if (!(decl.prop in alignConfig)) {
     throw new Error(`unkown lvgl css attribute(${decl.prop}) in ${lineInfo}!`);
   }
 
-  const config = attributeAlignConfig[decl.prop];
+  const config = alignConfig[decl.prop];
   const valueAst = valueParser(decl.value);
   const getSingleWordNode = () => {
     const valueNodes = valueAst.nodes.filter(node => node.type === 'word');
@@ -127,7 +127,7 @@ function attributeTransform(decl: Declaration): {name: string, value: string}[] 
       const sides = parseSides(decl.value);
       ['top', 'right', 'bottom', 'left'].forEach((k, i) => {
         const newDecl = decl.clone({prop: config.target[i], value: sides[k]});
-        attributes.push(...attributeTransform(newDecl));
+        attributes.push(...attributeTransform(newDecl, alignConfig));
       });
       return attributes;
       break;
@@ -173,7 +173,7 @@ interface StyleItem {
 
 const selectorProcessor = selectorPaser();
 
-export function transform(rule: Rule): StyleItem {
+export function transform(rule: Rule, alignConfig: Record<string, StaticAlign | DynamicAlign> = attributeAlignConfig): StyleItem {
   const selectorAst = selectorProcessor.astSync(rule.selector);
   let selector: selectorPaser.Selector | null = null;
   if (selectorAst.nodes.length) {
@@ -213,7 +213,7 @@ export function transform(rule: Rule): StyleItem {
   }
 
   for (let node of rule.nodes.filter(node => node.type === 'decl')) {
-    styleItem.attributes.push(...attributeTransform(node as Declaration));
+    styleItem.attributes.push(...attributeTransform(node as Declaration, alignConfig));
   }
 
   return styleItem;
