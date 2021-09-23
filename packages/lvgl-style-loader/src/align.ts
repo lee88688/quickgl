@@ -1,5 +1,6 @@
 // https://docs.lvgl.io/master/overview/style-props.html
 import postcss, { Declaration, Rule } from 'postcss'
+import * as Color from 'color'; 
 import * as selectorPaser from 'postcss-selector-parser';
 import * as valueParser from 'postcss-value-parser';
 import parseSides from 'parse-css-sides';
@@ -60,10 +61,12 @@ interface DynamicAlign {
   transform: (decl: Declaration) => {value: string, name: string}[];
 }
 
+export type AttributeAlignConfig = Record<string, StaticAlign | DynamicAlign>;
+
 /**
  * key is css attribute name
  */
-const attributeAlignConfig: Record<string, StaticAlign | DynamicAlign> = {
+const attributeAlignConfig: AttributeAlignConfig = {
   width: {
     type: 'coord',
     target: 'width'
@@ -74,7 +77,13 @@ const attributeAlignConfig: Record<string, StaticAlign | DynamicAlign> = {
   }
 }
 
-function attributeTransform(decl: Declaration, alignConfig: Record<string, StaticAlign | DynamicAlign>): {name: string, value: string}[] {
+function valueFunctionToString(node: valueParser.Node): string {
+  if (node.type === 'comment') return '';
+  else if (node.type !== 'function') return node.value;
+  return `${node.value}(${node.nodes.map(valueFunctionToString).join('')})`
+}
+
+function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig): {name: string, value: string}[] {
   const lineInfo = `line(${decl?.source?.start.line})`;
   if (!(decl.prop in alignConfig)) {
     throw new Error(`unkown lvgl css attribute(${decl.prop}) in ${lineInfo}!`);
@@ -83,7 +92,7 @@ function attributeTransform(decl: Declaration, alignConfig: Record<string, Stati
   const config = alignConfig[decl.prop];
   const valueAst = valueParser(decl.value);
   const getSingleWordNode = () => {
-    const valueNodes = valueAst.nodes.filter(node => node.type === 'word');
+    const valueNodes = valueAst.nodes.filter(node => node.type === 'word' || node.type === 'function');
     if (valueNodes.length !== 1) {
       throw new Error(`multiple value is not supported in attribute(${decl.prop}) in ${lineInfo}`);
     }
@@ -112,11 +121,17 @@ function attributeTransform(decl: Declaration, alignConfig: Record<string, Stati
     }
     case 'color': {
       const node = getSingleWordNode();
-      if (node.value.startsWith('#')) {
-        return []; // todo
-      } else {
-        throw new Error(`unsupported format(${node.value}) in ${lineInfo}`);
+      let color: number[] = [];
+      let value = node.value;
+      if (node.type === 'function') {
+        value = valueFunctionToString(node);
       }
+      try {
+        color = Color(value).rgb().array();
+      } catch (e) {
+        throw new Error(`unsupported format(${value}) in ${lineInfo}`);
+      }
+      return [{value: `LV_COLOR_MAKE(${color.join(',')})`, name: config.target}]
       break;
     }
     case 'side': {
@@ -161,7 +176,7 @@ function attributeTransform(decl: Declaration, alignConfig: Record<string, Stati
   return [];
 }
 
-interface StyleItem {
+export interface StyleItem {
   className: string;
   stateSelector: string[];
   partSelector: string[];
@@ -173,7 +188,7 @@ interface StyleItem {
 
 const selectorProcessor = selectorPaser();
 
-export function transform(rule: Rule, alignConfig: Record<string, StaticAlign | DynamicAlign> = attributeAlignConfig): StyleItem {
+export function transform(rule: Rule, alignConfig: AttributeAlignConfig = attributeAlignConfig): StyleItem {
   const selectorAst = selectorProcessor.astSync(rule.selector);
   let selector: selectorPaser.Selector | null = null;
   if (selectorAst.nodes.length) {

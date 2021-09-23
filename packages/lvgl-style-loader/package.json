@@ -20,6 +20,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "color": "^4.0.1",
     "loader-utils": "^2.0.0",
     "parse-css-dimension": "^1.1.0",
     "parse-css-sides": "^3.0.1",
@@ -28,6 +29,7 @@
     "postcss-value-parser": "^4.1.0"
   },
   "devDependencies": {
+    "@types/color": "^3.0.2",
     "webpack": "^5.53.0"
   }
 }
