@@ -21,19 +21,19 @@ describe('align config', () => {
           className: 's1',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'aa', value: '10px', type: 'coord'}]
+          attributes: [{name: 'aa', value: '10', type: 'pixel'}]
         },
         {
           className: 's2',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'aa', value: '10%', type: 'coord'}]
+          attributes: [{name: 'aa', value: '10', type: 'percent'}]
         },
         {
           className: 's3',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'bb', value: '20px', type: 'pixel'}]
+          attributes: [{name: 'bb', value: '20', type: 'pixel'}]
         }
       ],
       {
@@ -118,10 +118,10 @@ describe('align config', () => {
           stateSelector: [],
           partSelector: [],
           attributes: [
-            {name: 'aa', value: '15px', type: 'coord'}, 
-            {name: 'bb', value: '15px', type: 'coord'}, 
-            {name: 'cc', value: '15px', type: 'coord'},
-            {name: 'dd', value: '15px', type: 'coord'}
+            {name: 'aa', value: '15', type: 'pixel'}, 
+            {name: 'bb', value: '15', type: 'pixel'}, 
+            {name: 'cc', value: '15', type: 'pixel'},
+            {name: 'dd', value: '15', type: 'pixel'}
           ]
         }
       ],

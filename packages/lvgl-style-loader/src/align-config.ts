@@ -16,6 +16,11 @@ interface StaticAlignPixelType {
   target: string;
 }
 
+interface StaticAlignPercentType {
+  type: 'percent';
+  target: string;
+}
+
 interface StaticAlignColorType {
   type: 'color';
   target: string;
@@ -47,6 +52,7 @@ interface StaticAlignSideType {
 type StaticAlign = 
   | StaticAlignCoordType
   | StaticAlignPixelType
+  | StaticAlignPercentType
   | StaticAlignColorType
   | StaticAlignEnumType
   | StaticAlignSideType

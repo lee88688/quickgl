@@ -39,26 +39,28 @@ function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig
   }
   let attributesValue: StyleItemAttributes = [];
   switch (config.type) {
+    case 'pixel':
+    case 'percent':
     case 'coord': {
       const node = getSingleWordNode();
       if (node.value.endsWith('%')) {
-        attributesValue = [{value: node.value, name: config.target, type: config.type}];
+        attributesValue = [{value: node.value.slice(0, -1), name: config.target, type: 'percent'}];
       } else if (node.value.endsWith('px')) {
-        attributesValue = [{value: node.value, name: config.target, type: config.type}];
+        attributesValue = [{value: node.value.slice(0, -2), name: config.target, type: 'pixel'}];
       } else {
         throw new Error(`unsupported format(${node.value}) in ${lineInfo}`);
       }
       break;
     }
-    case 'pixel': {
-      const node = getSingleWordNode();
-      if (node.value.endsWith('px')) {
-        attributesValue = [{value: node.value, name: config.target, type: config.type}];
-      } else {
-        throw new Error(`unsupported format(${node.value}) in ${lineInfo}`);
-      }
-      break;
-    }
+    // case 'pixel': {
+    //   const node = getSingleWordNode();
+    //   if (node.value.endsWith('px')) {
+    //     attributesValue = [{value: node.value, name: config.target, type: config.type}];
+    //   } else {
+    //     throw new Error(`unsupported format(${node.value}) in ${lineInfo}`);
+    //   }
+    //   break;
+    // }
     case 'color': {
       const node = getSingleWordNode();
       let color: number[] = [];
