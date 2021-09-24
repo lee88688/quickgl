@@ -4,77 +4,16 @@ import * as Color from 'color';
 import * as selectorPaser from 'postcss-selector-parser';
 import * as valueParser from 'postcss-value-parser';
 import parseSides from 'parse-css-sides';
-import { PartSelector, StateSelector } from './types';
+import { PartSelector, StateSelector } from './constants';
+import { AttributeAlignConfig, AttributeAlignType } from './align-config';
 
-/**
- * coord: pixel or percentage
- * percentage use macro `LV_PCT(x)` to transform
- */
-interface StaticAlignCoordType {
-  type: 'coord';
-  target: string;
-}
 
-// only pixel
-interface StaticAlignPixelType {
-  type: 'pixel';
-  target: string;
-}
-
-interface StaticAlignColorType {
-  type: 'color';
-  target: string;
-}
-
-/**
- * enum: usually c macros
- * value is css attribute value and mapTo is corresponding lvgl style attribute value
- */
-interface StaticAlignEnumType {
-  type: 'enum';
-  target: string;
-  enum: string[] | {value: string, mapTo: string}[];
-}
-
-/**
- * expand type is used to expanding it to other types
- * only support CSS sides
- * the unit is px(pixel)
- * target is a string array which indicate to expanded attributes
- * the order is top -> right -> bottom -> left
- * eg. padding -> padding-top, padding-right, padding-bottom, padding-left
- */
-interface StaticAlignSideType {
-  type: 'side';
-  target: string[];
-}
-
-type StaticAlign = 
-  | StaticAlignCoordType
-  | StaticAlignPixelType
-  | StaticAlignColorType
-  | StaticAlignEnumType
-  | StaticAlignSideType
-
-interface DynamicAlign {
-  type: 'dynamic';
-  transform: (decl: Declaration) => {value: string, name: string}[];
-}
-
-export type AttributeAlignConfig = Record<string, StaticAlign | DynamicAlign>;
-
-/**
- * key is css attribute name
- */
-const attributeAlignConfig: AttributeAlignConfig = {
-  width: {
-    type: 'coord',
-    target: 'width'
-  },
-  'min-width': {
-    type: 'coord',
-    target: 'min-width'
-  }
+export type StyleItemAttributes = {name: string, value: string, type: AttributeAlignType}[];
+export interface StyleItem {
+  className: string;
+  stateSelector: string[];
+  partSelector: string[];
+  attributes: StyleItemAttributes;
 }
 
 function valueFunctionToString(node: valueParser.Node): string {
@@ -83,7 +22,7 @@ function valueFunctionToString(node: valueParser.Node): string {
   return `${node.value}(${node.nodes.map(valueFunctionToString).join('')})`
 }
 
-function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig): {name: string, value: string}[] {
+function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig): StyleItemAttributes {
   const lineInfo = `line(${decl?.source?.start.line})`;
   if (!(decl.prop in alignConfig)) {
     throw new Error(`unkown lvgl css attribute(${decl.prop}) in ${lineInfo}!`);
@@ -98,13 +37,14 @@ function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig
     }
     return valueNodes[0];
   }
+  let attributesValue: StyleItemAttributes = [];
   switch (config.type) {
     case 'coord': {
       const node = getSingleWordNode();
       if (node.value.endsWith('%')) {
-        return [{value: `LV_PCT(${node.value.slice(0, -1)})`, name: config.target}];
+        attributesValue = [{value: node.value, name: config.target, type: config.type}];
       } else if (node.value.endsWith('px')) {
-        return [{value: node.value.slice(0, -2), name: config.target}];
+        attributesValue = [{value: node.value, name: config.target, type: config.type}];
       } else {
         throw new Error(`unsupported format(${node.value}) in ${lineInfo}`);
       }
@@ -113,7 +53,7 @@ function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig
     case 'pixel': {
       const node = getSingleWordNode();
       if (node.value.endsWith('px')) {
-        return [{value: node.value.slice(0, -2), name: config.target}];
+        attributesValue = [{value: node.value, name: config.target, type: config.type}];
       } else {
         throw new Error(`unsupported format(${node.value}) in ${lineInfo}`);
       }
@@ -131,20 +71,20 @@ function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig
       } catch (e) {
         throw new Error(`unsupported format(${value}) in ${lineInfo}`);
       }
-      return [{value: `LV_COLOR_MAKE(${color.join(',')})`, name: config.target}]
+      attributesValue = [{value: `rgb(${color.join(',')})`, name: config.target, type: config.type}]
       break;
     }
     case 'side': {
       if (valueAst.nodes.filter(node => node.type === 'word').some(node => !node.value.endsWith('px'))) {
         throw new Error(`lvgl css sides only support px unit in ${lineInfo}!`);
       }
-      const attributes: {value: string, name: string}[] = [];
+      const attributes: StyleItemAttributes = [];
       const sides = parseSides(decl.value);
       ['top', 'right', 'bottom', 'left'].forEach((k, i) => {
         const newDecl = decl.clone({prop: config.target[i], value: sides[k]});
         attributes.push(...attributeTransform(newDecl, alignConfig));
       });
-      return attributes;
+      attributesValue = attributes;
       break;
     }
     case 'enum': {
@@ -158,14 +98,14 @@ function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig
       }
       if (hasMapTo) {
         const enumValue = (config.enum as {value: string, mapTo: string}[]).find(({value}) => value === node.value);
-        return [{value: enumValue.mapTo, name: config.target}];
+        attributesValue = [{value: enumValue.mapTo, name: config.target, type: config.type}];
       } else {
-        return [{value: node.value, name: config.target}];
+        return [{value: node.value, name: config.target, type: config.type}];
       }
       break;
     }
     case 'dynamic': {
-      return config.transform(decl);
+      attributesValue = config.transform(decl);
       break;
     }
     default: {
@@ -173,22 +113,12 @@ function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig
     }
   }
 
-  return [];
-}
-
-export interface StyleItem {
-  className: string;
-  stateSelector: string[];
-  partSelector: string[];
-  attributes: {
-    name: string;
-    value: string;
-  }[]
+  return attributesValue;
 }
 
 const selectorProcessor = selectorPaser();
 
-export function transform(rule: Rule, alignConfig: AttributeAlignConfig = attributeAlignConfig): StyleItem {
+export function transform(rule: Rule, alignConfig: AttributeAlignConfig): StyleItem {
   const selectorAst = selectorProcessor.astSync(rule.selector);
   let selector: selectorPaser.Selector | null = null;
   if (selectorAst.nodes.length) {

@@ -1,5 +1,6 @@
 import postcss, { Rule } from 'postcss';
-import {transform, AttributeAlignConfig, StyleItem} from '../align';
+import {StyleItem, transform} from '../align';
+import { AttributeAlignConfig } from '../align-config';
 
 function transformExpect(css: string, expectArr: StyleItem[], config?: AttributeAlignConfig) {
   const ast = postcss.parse(css);
@@ -20,19 +21,19 @@ describe('align config', () => {
           className: 's1',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'aa', value: '10'}]
+          attributes: [{name: 'aa', value: '10px', type: 'coord'}]
         },
         {
           className: 's2',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'aa', value: 'LV_PCT(10)'}]
+          attributes: [{name: 'aa', value: '10%', type: 'coord'}]
         },
         {
           className: 's3',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'bb', value: '20'}]
+          attributes: [{name: 'bb', value: '20px', type: 'pixel'}]
         }
       ],
       {
@@ -57,13 +58,13 @@ describe('align config', () => {
           className: 's1',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'aa', value: 'LV_COLOR_MAKE(242,86,196)'}]
+          attributes: [{name: 'aa', value: 'rgb(242,86,196)', type: 'color'}]
         },
         {
           className: 's2',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'aa', value: 'LV_COLOR_MAKE(12,12,12)'}]
+          attributes: [{name: 'aa', value: 'rgb(12,12,12)', type: 'color'}]
         }
       ],
       {
@@ -75,33 +76,70 @@ describe('align config', () => {
     );
   });
 
-  it('enum config', () => {});
+  it('enum config', () => {
+    transformExpect(
+      `.s1 { a: A }
+      .s2 { b: B }`,
+      [
+        {
+          className: 's1',
+          stateSelector: [],
+          partSelector: [],
+          attributes: [{name: 'aa', value: 'AA', type: 'enum'}]
+        },
+        {
+          className: 's2',
+          stateSelector: [],
+          partSelector: [],
+          attributes: [{name: 'bb', value: 'B', type: 'enum'}]
+        }
+      ],
+      {
+        a: {
+          type: 'enum',
+          target: 'aa',
+          enum: [{ value: 'A', mapTo: 'AA' }]
+        },
+        b: {
+          type: 'enum',
+          target: 'bb',
+          enum: ['B']
+        }
+      }
+    );
+  });
 
-  it('side config', () => {});
+  it('side config', () => {
+    transformExpect(
+      `.s1 { side: 15px }`,
+      [
+        {
+          className: 's1',
+          stateSelector: [],
+          partSelector: [],
+          attributes: [
+            {name: 'aa', value: '15px', type: 'coord'}, 
+            {name: 'bb', value: '15px', type: 'coord'}, 
+            {name: 'cc', value: '15px', type: 'coord'},
+            {name: 'dd', value: '15px', type: 'coord'}
+          ]
+        }
+      ],
+      {
+        a: {type: 'coord', target: 'aa'},
+        b: {type: 'coord', target: 'bb'},
+        c: {type: 'coord', target: 'cc'},
+        d: {type: 'coord', target: 'dd'},
+        side: {
+          type: 'side',
+          target: ['a', 'b', 'c', 'd']
+        }
+      }
+    );
+  });
 });
 
 describe('transform', () => {
   it('width', () => {
-    const css = `.s1 { width: 30px; } .s2 { width: 40%; }`
-    const ast = postcss.parse(css);
-    const [r1, r2] = ast.nodes;
-    // s1
-    const res1 = transform(r1 as Rule);
-    
-    expect(res1).toEqual({
-      className: 's1',
-      stateSelector: [],
-      partSelector: [],
-      attributes: [{name: 'width', value: '30'}]
-    })
-    // s2
-    const res2 = transform(r2 as Rule);
-    
-    expect(res2).toEqual({
-      className: 's2',
-      stateSelector: [],
-      partSelector: [],
-      attributes: [{name: 'width', value: 'LV_PCT(40)'}]
-    })
   });
 });
