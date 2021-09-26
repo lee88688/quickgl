@@ -4,7 +4,7 @@ import * as Color from 'color';
 import * as selectorPaser from 'postcss-selector-parser';
 import * as valueParser from 'postcss-value-parser';
 import parseSides from 'parse-css-sides';
-import { PartSelector, StateSelector } from './constants';
+import { PART_SELECTOR, STATE_SELECTOR } from './constants';
 import { AttributeAlignConfig, AttributeAlignType } from './align-config';
 
 
@@ -134,7 +134,7 @@ export function transform(rule: Rule, alignConfig: AttributeAlignConfig): StyleI
     // only class selector is supported
     || selector.nodes.filter(node => node.type === 'class').length !== selector.nodes.length
     // class selector must be in StateSelector or PartSelector when starting with second one.
-    || selector.nodes.some((node, index) => index !== 0 && (!(node.value in StateSelector) || !(node.value in PartSelector)))
+    || selector.nodes.some((node, index) => index !== 0 && (!(node.value in STATE_SELECTOR) || !(node.value in PART_SELECTOR)))
   ) {
     throw new Error('unsupported selector syntax!');
   }
@@ -152,9 +152,9 @@ export function transform(rule: Rule, alignConfig: AttributeAlignConfig): StyleI
       continue;
     }
     const name = selector.nodes[i].value;
-    if (name in StateSelector) {
+    if (name in STATE_SELECTOR) {
       styleItem.stateSelector.push(name);
-    } else if (name in PartSelector) {
+    } else if (name in PART_SELECTOR) {
       styleItem.partSelector.push(name);
     }
   }

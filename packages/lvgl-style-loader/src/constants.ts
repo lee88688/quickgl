@@ -1,4 +1,4 @@
-export const StateSelector: Record<string, number> = {
+export const STATE_SELECTOR: Record<string, number> = {
   LV_STATE_DEFAULT: 0x0000, // (0x0000) Normal, released state
   LV_STATE_CHECKED: 0x0001, // (0x0001) Toggled or checked state
   LV_STATE_FOCUSED: 0x0002, // (0x0002) Focused via keypad or encoder or clicked via touchpad/mouse
@@ -14,14 +14,16 @@ export const StateSelector: Record<string, number> = {
   LV_STATE_USER_4: 0x8000, // (0x8000) Custom state
 }
 
-export const PartSelector: Record<string, string> = {
-  LV_PART_MAIN: 'LV_PART_MAIN', // A background like rectangle*/
-  LV_PART_SCROLLBAR: 'LV_PART_SCROLLBAR', // The scrollbar(s)
-  LV_PART_INDICATOR: 'LV_PART_INDICATOR', // Indicator, e.g. for slider, bar, switch, or the tick box of the checkbox
-  LV_PART_KNOB: 'LV_PART_KNOB', // Like a handle to grab to adjust a value
-  LV_PART_SELECTED: 'LV_PART_SELECTED', // Indicate the currently selected option or section
-  LV_PART_ITEMS: 'LV_PART_ITEMS', // Used if the widget has multiple similar elements (e.g. table cells)
-  LV_PART_TICKS: 'LV_PART_TICKS', // Ticks on scales e.g. for a chart or meter
-  LV_PART_CURSOR: 'LV_PART_CURSOR', // Mark a specific place e.g. text area's or chart's cursor
-  LV_PART_CUSTOM_FIRST: 'LV_PART_CUSTOM_FIRST', // Custom part identifiers can be added starting from here.
+export const PART_SELECTOR: Record<string, number> = {
+  LV_PART_MAIN: 0x000000, // A background like rectangle*/
+  LV_PART_SCROLLBAR: 0x010000, // The scrollbar(s)
+  LV_PART_INDICATOR: 0x020000, // Indicator, e.g. for slider, bar, switch, or the tick box of the checkbox
+  LV_PART_KNOB: 0x030000, // Like a handle to grab to adjust a value
+  LV_PART_SELECTED: 0x040000, // Indicate the currently selected option or section
+  LV_PART_ITEMS: 0x050000, // Used if the widget has multiple similar elements (e.g. table cells)
+  LV_PART_TICKS: 0x060000, // Ticks on scales e.g. for a chart or meter
+  LV_PART_CURSOR: 0x070000, // Mark a specific place e.g. text area's or chart's cursor
+  LV_PART_CUSTOM_FIRST: 0x080000, // Custom part identifiers can be added starting from here.
+
+  LV_PART_ANY: 0x0F0000,
 }
