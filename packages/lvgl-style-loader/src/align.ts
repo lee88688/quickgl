@@ -159,8 +159,22 @@ export function transform(rule: Rule, alignConfig: AttributeAlignConfig): StyleI
     }
   }
 
+  // attributes transform
   for (let node of rule.nodes.filter(node => node.type === 'decl')) {
     styleItem.attributes.push(...attributeTransform(node as Declaration, alignConfig));
+  }
+
+  // attribute merge
+  for (let configKey of Object.keys(alignConfig)) {
+    const config = alignConfig[configKey];
+    if (config.type !== 'merge') continue;
+    const filtered = [];
+    const mergeAttrs = [];
+    for (const attr of styleItem.attributes) {
+      if (config.target.includes(attr.name)) mergeAttrs.push(attr);
+      else filtered.push(attr);
+    }
+    styleItem.attributes = filtered.concat(config.transform(mergeAttrs));
   }
 
   return styleItem;

@@ -137,6 +137,40 @@ describe('align config', () => {
       }
     );
   });
+
+  it('merge config', () => {
+    transformExpect(
+      `.s1 {
+        a: 1px;
+        b: 3px;
+      }`,
+      [
+        {
+          className: 's1',
+          stateSelector: [],
+          partSelector: [],
+          attributes: [
+            {name: 'cc', value: '4', type: 'pixel'},
+          ]
+        }
+      ],
+      {
+        a: {type: 'pixel', target: 'aa'},
+        b: {type: 'pixel', target: 'bb'},
+        c: {
+          type: 'merge',
+          target: ['aa', 'bb'],
+          transform(attrs) {
+            let sum = 0;
+            for (let {value} of attrs) {
+              sum += parseFloat(value);
+            }
+            return [{value: sum.toString(), name: 'cc', type: 'pixel'}];
+          }
+        }
+      }
+    )
+  })
 });
 
 describe('transform', () => {

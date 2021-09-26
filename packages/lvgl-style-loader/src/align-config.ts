@@ -62,8 +62,19 @@ interface DynamicAlign {
   transform: (decl: Declaration) => StyleItemAttributes;
 }
 
-export type AttributeAlignConfig = Record<string, StaticAlign | DynamicAlign>;
-export type AttributeAlignType = (StaticAlign | DynamicAlign)['type'];
+/**
+ * merge multiple target after all types are aligned
+ */
+ interface MergeAlign {
+  type: 'merge';
+  target: string[];
+  transform(attributes: StyleItemAttributes): StyleItemAttributes;
+}
+
+type AlignType = StaticAlign | DynamicAlign | MergeAlign;
+
+export type AttributeAlignConfig = Record<string, AlignType>;
+export type AttributeAlignType = AlignType['type'];
   
 /**
  * key is css attribute name
