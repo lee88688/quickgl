@@ -12,7 +12,7 @@ export const STATE_SELECTOR: Record<string, number> = {
   LV_STATE_USER_2: 0x2000, // (0x2000) Custom state
   LV_STATE_USER_3: 0x4000, // (0x4000) Custom state
   LV_STATE_USER_4: 0x8000, // (0x8000) Custom state
-}
+};
 
 export const PART_SELECTOR: Record<string, number> = {
   LV_PART_MAIN: 0x000000, // A background like rectangle*/
@@ -26,7 +26,7 @@ export const PART_SELECTOR: Record<string, number> = {
   LV_PART_CUSTOM_FIRST: 0x080000, // Custom part identifiers can be added starting from here.
 
   LV_PART_ANY: 0x0F0000,
-}
+};
 
 export const STYLE_PROP: Record<string, number> = {
   LV_STYLE_PROP_INV               : 0,

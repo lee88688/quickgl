@@ -17,7 +17,8 @@
     "registry": "https://registry.npm.taobao.org/"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc"
   },
   "dependencies": {
     "color": "^4.0.1",

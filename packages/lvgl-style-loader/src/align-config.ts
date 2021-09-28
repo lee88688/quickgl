@@ -79,7 +79,7 @@ export type AttributeAlignType = AlignType['type'];
 /**
  * key is css attribute name
  */
-export const attributeAlignConfig: AttributeAlignConfig = {
+export const defaultAttributeAlignConfig: AttributeAlignConfig = {
   width: {
     type: 'coord',
     target: 'width'
@@ -88,7 +88,7 @@ export const attributeAlignConfig: AttributeAlignConfig = {
     type: 'coord',
     target: 'min_width'
   }
-}
+};
 
 // export function defaultAlignConfig(): AttributeAlignConfig {
 //   return {

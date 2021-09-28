@@ -7,7 +7,7 @@ export function generateCLang(styleItem: StyleItem): string {
   return '';
 }
 
-interface JSStyleItem {
+export interface JSStyleItem {
   className: string;
   selector: number;
   attributes: {name: number, value: number}[];
@@ -18,7 +18,7 @@ function lvPct(x: number): number {
   return (x < 0 ? lvCoordSetSpec(1000 - (x)) : lvCoordSetSpec(x));
 }
 
-export function generateJS(styleItem: StyleItem): JSStyleItem {
+export function generateJSStyleItem(styleItem: StyleItem): JSStyleItem {
   const jsStyleItem: JSStyleItem = {
     className: styleItem.className,
     selector: 0,
@@ -65,4 +65,8 @@ export function generateJS(styleItem: StyleItem): JSStyleItem {
     }
   }
   return jsStyleItem;
+}
+
+export function generateJS(rules: Record<string, JSStyleItem>): string {
+  return `export default createLvglStyles(${JSON.stringify(rules)})`;
 }

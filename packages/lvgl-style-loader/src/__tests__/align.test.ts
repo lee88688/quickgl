@@ -1,5 +1,5 @@
 import postcss, { Rule } from 'postcss';
-import {StyleItem, transform} from '../align';
+import { StyleItem, transform } from '../align';
 import { AttributeAlignConfig } from '../align-config';
 
 function transformExpect(css: string, expectArr: StyleItem[], config?: AttributeAlignConfig) {
@@ -21,19 +21,19 @@ describe('align config', () => {
           className: 's1',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'aa', value: '10', type: 'pixel'}]
+          attributes: [{ name: 'aa', value: '10', type: 'pixel' }]
         },
         {
           className: 's2',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'aa', value: '10', type: 'percent'}]
+          attributes: [{ name: 'aa', value: '10', type: 'percent' }]
         },
         {
           className: 's3',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'bb', value: '20', type: 'pixel'}]
+          attributes: [{ name: 'bb', value: '20', type: 'pixel' }]
         }
       ],
       {
@@ -46,7 +46,7 @@ describe('align config', () => {
           target: 'bb'
         }
       }
-    )
+    );
   });
 
   it('color config', () => {
@@ -58,13 +58,13 @@ describe('align config', () => {
           className: 's1',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'aa', value: 'rgb(242,86,196)', type: 'color'}]
+          attributes: [{ name: 'aa', value: 'rgb(242,86,196)', type: 'color' }]
         },
         {
           className: 's2',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'aa', value: 'rgb(12,12,12)', type: 'color'}]
+          attributes: [{ name: 'aa', value: 'rgb(12,12,12)', type: 'color' }]
         }
       ],
       {
@@ -85,13 +85,13 @@ describe('align config', () => {
           className: 's1',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'aa', value: 'AA', type: 'enum'}]
+          attributes: [{ name: 'aa', value: 'AA', type: 'enum' }]
         },
         {
           className: 's2',
           stateSelector: [],
           partSelector: [],
-          attributes: [{name: 'bb', value: 'B', type: 'enum'}]
+          attributes: [{ name: 'bb', value: 'B', type: 'enum' }]
         }
       ],
       {
@@ -118,18 +118,18 @@ describe('align config', () => {
           stateSelector: [],
           partSelector: [],
           attributes: [
-            {name: 'aa', value: '15', type: 'pixel'}, 
-            {name: 'bb', value: '15', type: 'pixel'}, 
-            {name: 'cc', value: '15', type: 'pixel'},
-            {name: 'dd', value: '15', type: 'pixel'}
+            { name: 'aa', value: '15', type: 'pixel' }, 
+            { name: 'bb', value: '15', type: 'pixel' }, 
+            { name: 'cc', value: '15', type: 'pixel' },
+            { name: 'dd', value: '15', type: 'pixel' }
           ]
         }
       ],
       {
-        a: {type: 'coord', target: 'aa'},
-        b: {type: 'coord', target: 'bb'},
-        c: {type: 'coord', target: 'cc'},
-        d: {type: 'coord', target: 'dd'},
+        a: { type: 'coord', target: 'aa' },
+        b: { type: 'coord', target: 'bb' },
+        c: { type: 'coord', target: 'cc' },
+        d: { type: 'coord', target: 'dd' },
         side: {
           type: 'side',
           target: ['a', 'b', 'c', 'd']
@@ -150,27 +150,27 @@ describe('align config', () => {
           stateSelector: [],
           partSelector: [],
           attributes: [
-            {name: 'cc', value: '4', type: 'pixel'},
+            { name: 'cc', value: '4', type: 'pixel' },
           ]
         }
       ],
       {
-        a: {type: 'pixel', target: 'aa'},
-        b: {type: 'pixel', target: 'bb'},
+        a: { type: 'pixel', target: 'aa' },
+        b: { type: 'pixel', target: 'bb' },
         c: {
           type: 'merge',
           target: ['aa', 'bb'],
           transform(attrs) {
             let sum = 0;
-            for (let {value} of attrs) {
+            for (const { value } of attrs) {
               sum += parseFloat(value);
             }
-            return [{value: sum.toString(), name: 'cc', type: 'pixel'}];
+            return [{ value: sum.toString(), name: 'cc', type: 'pixel' }];
           }
         }
       }
-    )
-  })
+    );
+  });
 });
 
 describe('transform', () => {
