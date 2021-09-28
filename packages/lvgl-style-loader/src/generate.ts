@@ -1,4 +1,4 @@
-import lodash from 'lodash';
+// import lodash from 'lodash';
 import { StyleItem } from "./align";
 import { PART_SELECTOR, STATE_SELECTOR, STYLE_PROP } from "./constants";
 
@@ -15,7 +15,7 @@ interface JSStyleItem {
 
 function lvPct(x: number): number {
   const lvCoordSetSpec = x => x | (1 << 13);
-  return (x < 0 ? lvCoordSetSpec(1000 - (x)) : lvCoordSetSpec(x))
+  return (x < 0 ? lvCoordSetSpec(1000 - (x)) : lvCoordSetSpec(x));
 }
 
 export function generateJS(styleItem: StyleItem): JSStyleItem {
@@ -42,12 +42,24 @@ export function generateJS(styleItem: StyleItem): JSStyleItem {
     switch(attr.type) {
       case 'pixel': {
         const value = parseInt(attr.value);
-        jsStyleItem.attributes.push({name: STYLE_PROP[name], value});
+        jsStyleItem.attributes.push({ name: STYLE_PROP[name], value });
         continue;
       }
       case 'percent': {
         const value = parseInt(attr.value);
-        jsStyleItem.attributes.push({name: STYLE_PROP[name], value: lvPct(value)});
+        jsStyleItem.attributes.push({ name: STYLE_PROP[name], value: lvPct(value) });
+        continue;
+      }
+      case 'color': {
+        const m = attr.value.match(/rgb\((\d+),(\d+),(\d+)\)/);
+        const r = parseInt(m[1]);
+        const g = parseInt(m[2]);
+        const b = parseInt(m[3]);
+        const color = (0xff & b) << 16 | (0xff & g) << 8 | (0xff & r);
+        jsStyleItem.attributes.push({ name: STYLE_PROP[name], value: color });
+        continue; 
+      }
+      case 'enum': {
         continue;
       }
     }
