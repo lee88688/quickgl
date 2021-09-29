@@ -55,7 +55,8 @@ export function generateJSStyleItem(styleItem: StyleItem): JSStyleItem {
         const r = parseInt(m[1]);
         const g = parseInt(m[2]);
         const b = parseInt(m[3]);
-        const color = (0xff & b) << 16 | (0xff & g) << 8 | (0xff & r);
+        // hight byte -- r, g, b -- low byte
+        const color = (0xff & b) | (0xff & g) << 8 | (0xff & r) << 16;
         jsStyleItem.attributes.push({ name: STYLE_PROP[name], value: color });
         continue; 
       }
