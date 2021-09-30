@@ -1,0 +1,26 @@
+{
+  "name": "@quickgl/types",
+  "version": "0.1.0",
+  "description": "quickgl types",
+  "author": "lee <lee88688@163.com>",
+  "homepage": "https://github.com/lee88688/quickgl#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npm.taobao.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lee88688/quickgl.git"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "bugs": {
+    "url": "https://github.com/lee88688/quickgl/issues"
+  }
+}

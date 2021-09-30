@@ -2,6 +2,12 @@
   "references": [
     {
       "path": "./packages/lvgl-style-loader"
+    },
+    {
+      "path": "./packages/quickgl-runtime"
+    },
+    {
+      "path": "./packages/quickgl-types"
     }
   ]
 }
