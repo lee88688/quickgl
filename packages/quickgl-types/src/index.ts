@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-new */
 export interface TimeoutObj {
   fn: (...argv: unknown[]) => void;
   timeout: number;
@@ -11,10 +12,14 @@ interface LvglStyleItem {
 }
 
 export interface LvglObjClass {
-  (): void;
+  new (): LvglObjClass;
   optObjStyles(type: OptLvglStyleType, style_or_arr: LvglStyleItem | LvglStyleItem[]): void;
+  appendChild(child: LvglObjClass): void;
+  removeChild(child: LvglObjClass): void;
+  insertBefore(child: LvglObjClass, before: LvglObjClass): void;
 }
 
 export interface LvglLabelClass extends LvglObjClass {
+  new (): LvglLabelClass;
   setText(text: string): void;
 }
