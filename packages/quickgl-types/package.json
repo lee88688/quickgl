@@ -18,7 +18,8 @@
     "url": "git+https://github.com/lee88688/quickgl.git"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "build:watch": "tsc --watch"
   },
   "bugs": {
     "url": "https://github.com/lee88688/quickgl/issues"

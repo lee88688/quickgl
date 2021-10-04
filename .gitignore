@@ -4,3 +4,5 @@ lib/
 
 .vscode/
 .idea/
+
+tsconfig.tsbuildinfo
