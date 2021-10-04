@@ -1,4 +1,11 @@
-import type { LvglLabelClass, LvglObjClass } from '@quickgl/types';
+import type { LvglLabelClass, LvglObjClass, TimeoutObj } from '@quickgl/types';
 
-declare const LvglObj: LvglObjClass;
-declare const LvglLabel: LvglLabelClass;
+declare global {
+  let timeoutArr: TimeoutObj[];
+
+  type LvglObj = LvglObjClass;
+  type LvglLabel = LvglLabelClass;
+
+  const LvglObj: LvglObjClass;
+  const LvglLabel: LvglLabelClass;
+}
