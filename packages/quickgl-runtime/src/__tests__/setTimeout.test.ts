@@ -1,4 +1,4 @@
-import * as timeoutApi from '../src/polyfill/setTimeout';
+import * as timeoutApi from '../polyfill/setTimeout';
 
 describe('setTimeout', () => {
   beforeAll(() => {
