@@ -42,6 +42,7 @@ export default {
 
   prepareUpdate(ins: LvglObj, type, oldProps: null | undefined | Record<string, any>, newProps: null | undefined | Record<string, any>) {
     // todo: does this execute on mount? not?
+    return null;
   },
 
   shouldSetTextContent() {
@@ -72,6 +73,10 @@ export default {
     container.appendChild(child);
   },
 
+  appendInitialChild(parent, child) {
+    parent.appendChild(child);
+  },
+
   insertBefore(parent, child, before) {
     // todo: how to?
     parent.insertBefore(child, before);
@@ -81,7 +86,7 @@ export default {
     parent.removeChild(child);
   },
 
-  commitTextUpdate(ins, oldText, newText) {
+  commitTextUpdate(ins: LvglLabel, oldText: string, newText: string) {
     ins.setText(newText);
   },
 
