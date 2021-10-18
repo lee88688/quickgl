@@ -5,3 +5,4 @@ const anyGlobal: any = global;
 anyGlobal.setTimeout = setTimeout;
 anyGlobal.clearTimeout = clearTimeout;
 anyGlobal.execTimeoutFn = execTimeoutFn;
+anyGlobal.timeoutArr = [];
