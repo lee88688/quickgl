@@ -87,6 +87,10 @@ export const defaultAttributeAlignConfig: AttributeAlignConfig = {
   'min-width': {
     type: 'coord',
     target: 'min_width'
+  },
+  'left': {
+    type: 'coord',
+    target: 'x'
   }
 };
 

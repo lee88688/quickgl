@@ -27,7 +27,9 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc",
+    "yalc:push": "yalc push",
+    "dev:build-push": "run-s build yalc:push"
   },
   "bugs": {
     "url": "https://github.com/lee88688/quickgl/issues"

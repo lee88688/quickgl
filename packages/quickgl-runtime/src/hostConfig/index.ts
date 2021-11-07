@@ -41,8 +41,8 @@ export default {
   },
 
   prepareUpdate(ins: LvglObj, type, oldProps: null | undefined | Record<string, any>, newProps: null | undefined | Record<string, any>) {
-    // todo: does this execute on mount? not?
-    return null;
+    // if no need to update return null, else return diff object
+    return {};
   },
 
   shouldSetTextContent() {
