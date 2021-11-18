@@ -2,6 +2,9 @@
 // import Reconciler from 'react-reconciler';
 // import type { HostConfig } from 'react-reconciler';
 
+import { EVENT_KEY_MAP } from '@quickgl/types';
+import diffProperties from "./diffProperties";
+
 export default {
   supportsMutation: true,
 
@@ -27,6 +30,13 @@ export default {
       obj.optObjStyles(1, props.className);
     }
 
+    for (const propKey in props) {
+      const value = props[propKey];
+      if (propKey.startsWith('on') && (propKey in EVENT_KEY_MAP) && typeof value === 'function') {
+        obj.addEventListener(EVENT_KEY_MAP[propKey], value);
+      }
+    }
+
     return obj;
   },
 
@@ -40,9 +50,8 @@ export default {
     return false;
   },
 
-  prepareUpdate(ins: LvglObj, type, oldProps: null | undefined | Record<string, any>, newProps: null | undefined | Record<string, any>) {
-    // if no need to update return null, else return diff object
-    return {};
+  prepareUpdate(ins: LvglObj, type, oldProps: null | undefined | Record<string, unknown>, newProps: null | undefined | Record<string, unknown>) {
+    return diffProperties(oldProps, newProps);
   },
 
   shouldSetTextContent() {
@@ -90,13 +99,38 @@ export default {
     ins.setText(newText);
   },
 
-  commitUpdate(ins, updatePayload, type, oldProps, newProps) {
-    const oldClassName = oldProps?.className;
-    const newClassName = newProps?.className;
-    // className
-    if (oldClassName != newClassName) {
-      oldClassName && ins.optObjStyles(0, oldClassName);
-      newClassName && ins.optObjStyles(1, newClassName);
+  commitUpdate(ins: LvglObj, updatePayload: unknown[], type: string, oldProps, newProps) {
+    for (let i = 0; i < updatePayload.length; i += 2) {
+      const propKey = updatePayload[i] as string;
+      const value = updatePayload[i + 1];
+
+      switch(propKey) {
+        case 'className': {
+          const oldClassName = oldProps?.className;
+          const newClassName = newProps?.className;
+          // className
+          oldClassName && ins.optObjStyles(0, oldClassName);
+          newClassName && ins.optObjStyles(1, newClassName);
+          break;
+        }
+        case 'style': {
+          break;
+        }
+        default: {
+          if (propKey.startsWith('on')) {
+            const key = EVENT_KEY_MAP[propKey];
+            if (typeof key === undefined) break;
+            if (typeof oldProps[propKey] === 'function') {
+              ins.removeEventListener(key, oldProps[propKey]);
+            }
+            if (typeof value === 'function') {
+              console.log('add event listener');
+              ins.addEventListener(key, value as (e) => void);
+            }
+            break;
+          }
+        }
+      }
     }
   },
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ReactReconciler = require("react-reconciler");
+import * as ReactReconciler from 'react-reconciler';
 import hostConfig from "./hostConfig";
 import './polyfill';
 

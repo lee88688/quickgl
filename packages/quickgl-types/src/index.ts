@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-new */
+export * from './constants';
+
 export interface TimeoutObj {
   fn: (...argv: unknown[]) => void;
   timeout: number;
@@ -17,6 +19,9 @@ export interface LvglObjClass {
   appendChild(child: LvglObjClass): void;
   removeChild(child: LvglObjClass): void;
   insertBefore(child: LvglObjClass, before: LvglObjClass): void;
+
+  addEventListener(type: number, listener: (e) => void);
+  removeEventListener(type: number, listener: (e) => void);
 }
 
 export interface LvglLabelClass extends LvglObjClass {

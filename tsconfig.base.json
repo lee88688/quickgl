@@ -3,6 +3,8 @@
     "module": "commonjs",
     "target": "ES2018",
     "lib": ["ES2018"],
-    "composite": true
+    "moduleResolution":"Node",
+    "composite": true,
+    "skipLibCheck": true
   }
 }
