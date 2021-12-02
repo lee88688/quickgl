@@ -27,13 +27,17 @@ interface StaticAlignColorType {
 }
 
 /**
- * enum: usually c macros
- * value is css attribute value and mapTo is corresponding lvgl style attribute value
+ * enum: usually c macros, there are 3 forms
+ * 1. just strings, user's value must be one of them.
+ * 2. value is css attribute value and mapTo is corresponding lvgl style attribute value.
+ * 3. template enum, template is regex one of which css attribute value must match.
+ *    if target is provided, the template must has groups, the group value is used for the target in sequence at next step.
+ *    if no target is provided, just matched string. 
  */
 interface StaticAlignEnumType {
   type: 'enum';
   target: string;
-  enum: string[] | {value: string, mapTo: string}[];
+  enum: string[] | {value: string, mapTo: string}[] | {reg: RegExp, target?: string[]}[];
 }
 
 /**
@@ -80,6 +84,7 @@ export type AttributeAlignType = AlignType['type'];
  * key is css attribute name
  */
 export const defaultAttributeAlignConfig: AttributeAlignConfig = {
+  // ----Size and position----
   width: {
     type: 'coord',
     target: 'width'
@@ -88,10 +93,64 @@ export const defaultAttributeAlignConfig: AttributeAlignConfig = {
     type: 'coord',
     target: 'min_width'
   },
+  'max-width': {
+    type: 'coord',
+    target: 'max_width'
+  },
+  height: {
+    type: 'coord',
+    target: 'height'
+  },
+  'min-height': {
+    type: 'coord',
+    target: 'min_height'
+  },
+  'max-height': {
+    type: 'coord',
+    target: 'max_height'
+  },
   'left': {
     type: 'coord',
     target: 'x'
-  }
+  },
+  x: {
+    type: 'coord',
+    target: 'x'
+  },
+  top: {
+    type: 'coord',
+    target: 'y'
+  },
+  y: {
+    type: 'coord',
+    target: 'y'
+  },
+
+  // ----Padding----
+  'padding-top': {
+    type: 'coord',
+    target: 'pad_top'
+  },
+  'padding-bottom': {
+    type: 'coord',
+    target: 'pad_bottom'
+  },
+  'padding-left': {
+    type: 'coord',
+    target: 'pad_left'
+  },
+  'padding-right': {
+    type: 'coord',
+    target: 'pad_right'
+  },
+  // pad_row
+  // pad_column
+  padding: {
+    type: 'side',
+    target: ['padding-top', 'padding-right', 'padding-bottom', 'padding-left']
+  },
+
+  // ----Background----
 };
 
 // export function defaultAlignConfig(): AttributeAlignConfig {

@@ -91,18 +91,53 @@ function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig
     }
     case 'enum': {
       const node = getSingleWordNode();
-      const hasMapTo = config.enum.length && typeof config.enum[0] !== 'string';
-      const isFound = hasMapTo
-        ? (config.enum as {value: string, mapTo: string}[]).some(({ value }) => value === node.value)
-        : (config.enum as string[]).includes(node.value);
+      const enumType = config.enum.length && typeof config.enum[0] === 'string' ? 1
+        : typeof (config.enum[0] as { value: string }).value === 'string' ? 2
+        : 3;
+      let isFound = false;
+      let extra: string | {value: string, target: string}[];
+
+      if (enumType === 1) {
+        isFound = (config.enum as string[]).includes(node.value);
+      } else if (enumType === 2) {
+        isFound = (config.enum as {value: string, mapTo: string}[]).some(({ value, mapTo }) => {
+          if (value === node.value) {
+            extra = mapTo;
+            return true;
+          }
+        });
+      } else {
+        isFound = (config.enum as {reg: RegExp, target?: string[]}[]).some(({ reg, target }, index) => {
+          // use raw attribute value
+          const m = decl.value.match(reg);
+          if (m && target) {
+            const groups = m.slice(1);
+            if (groups.length === 0 || groups.length > target.length) throw new Error(`unexpected regex enum type for attribute(${decl.prop}) at enum index(${index}) in ${lineInfo}`);
+            extra = [];
+            for (let i = 0; i < groups.length; i++) {
+              extra.push({ value: groups[i], target: target[i] });
+            }
+            return true;
+          } else if (m) {
+            extra = m[0];
+            return true;
+          }
+          return false;
+        });
+      }
+
       if (!isFound) {
         throw new Error(`unkown enum value(${node.value}) for attribute(${decl.prop}) in ${lineInfo}`);
       }
-      if (hasMapTo) {
-        const enumValue = (config.enum as {value: string, mapTo: string}[]).find(({ value }) => value === node.value);
-        attributesValue = [{ value: enumValue.mapTo, name: config.target, type: config.type }];
-      } else {
+      if (enumType === 1) {
         return [{ value: node.value, name: config.target, type: config.type }];
+      } else if (typeof extra === 'string') {
+        attributesValue = [{ value: extra, name: config.target, type: config.type }];
+      } else {
+        extra.forEach(({ value, target }) => {
+          const newDecl = decl.clone({ prop: target, value });
+          attributesValue.push(...attributeTransform(newDecl, alignConfig));
+        });
       }
       break;
     }

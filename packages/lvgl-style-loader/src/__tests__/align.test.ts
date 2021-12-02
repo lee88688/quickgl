@@ -79,7 +79,8 @@ describe('align config', () => {
   it('enum config', () => {
     transformExpect(
       `.s1 { a: A }
-      .s2 { b: B }`,
+      .s2 { b: B }
+      .s3 { c: func(A, B) }`,
       [
         {
           className: 's1',
@@ -92,7 +93,16 @@ describe('align config', () => {
           stateSelector: [],
           partSelector: [],
           attributes: [{ name: 'bb', value: 'B', type: 'enum' }]
-        }
+        },
+        {
+          className: 's3',
+          stateSelector: [],
+          partSelector: [],
+          attributes: [
+            { name: 'aa', value: 'AA', type: 'enum' },
+            { name: 'bb', value: 'B', type: 'enum' },
+          ]
+        },
       ],
       {
         a: {
@@ -104,6 +114,11 @@ describe('align config', () => {
           type: 'enum',
           target: 'bb',
           enum: ['B']
+        },
+        c: {
+          type: 'enum',
+          target: 'c',
+          enum: [{ reg: /func\((.*?),\s*(.*?)\)/, target: ['a', 'b']}]
         }
       }
     );
