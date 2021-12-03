@@ -1,4 +1,4 @@
-import { Declaration } from "postcss";
+import { decl, Declaration } from "postcss";
 import { StyleItemAttributes } from "./align";
 
 /**
@@ -67,6 +67,14 @@ interface DynamicAlign {
 }
 
 /**
+ * proxy align type can use multiple config or target to process values.
+ */
+interface ProxyAlignType {
+  type: 'proxy';
+  proxyConfig: (AlignType | string)[];
+}
+
+/**
  * merge multiple target after all types are aligned
  */
  interface MergeAlign {
@@ -75,7 +83,7 @@ interface DynamicAlign {
   transform(attributes: StyleItemAttributes): StyleItemAttributes;
 }
 
-type AlignType = StaticAlign | DynamicAlign | MergeAlign;
+type AlignType = StaticAlign | DynamicAlign | MergeAlign | ProxyAlignType;
 
 export type AttributeAlignConfig = Record<string, AlignType>;
 export type AttributeAlignType = AlignType['type'];
@@ -124,6 +132,38 @@ export const defaultAttributeAlignConfig: AttributeAlignConfig = {
   y: {
     type: 'coord',
     target: 'y'
+  },
+  // todo: align
+  'transform-width': {
+    type: 'coord',
+    target: 'transform_width'
+  },
+  'transform-height': {
+    type: 'coord',
+    target: 'transform_height'
+  },
+  'transform-width-height-pre': {
+    type: 'dynamic',
+    transform(decl: Declaration): StyleItemAttributes {
+      return [{ name: decl.prop, value: `${parseFloat(decl.value) * 100}%`, type: 'dynamic' }];
+    }
+  },
+  'transform-width-proxy': {
+    type: 'proxy',
+    proxyConfig: ['transform-width-height-pre', 'transform-width']
+  },
+  'transform-height-proxy': {
+    type: 'proxy',
+    proxyConfig: ['transform-width-height-pre', 'transform-height']
+  },
+  transform: {
+    type: 'enum',
+    target: 'transform',
+    enum: [
+      { reg: /scaleX\(\s*([\d.]+)\s*\)/, target: ['transform-width-proxy']},
+      { reg: /scaleY\(\s*([\d.]+)\s*\)/, target: ['transform-height-proxy']},
+      { reg: /scale\(\s*([\d.]+)\s*, \s*([\d.]+)\s*\)/, target: ['transform-width-proxy', 'transform-height-proxy']},
+    ]
   },
 
   // ----Padding----

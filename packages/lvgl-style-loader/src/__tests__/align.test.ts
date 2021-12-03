@@ -1,14 +1,4 @@
-import postcss, { Rule } from 'postcss';
-import { StyleItem, transform } from '../align';
-import { AttributeAlignConfig } from '../align-config';
-
-function transformExpect(css: string, expectArr: StyleItem[], config?: AttributeAlignConfig) {
-  const ast = postcss.parse(css);
-  expect(ast.nodes.length).toBe(expectArr.length);
-  for (let i = 0; i < expectArr.length; i++) {
-    expect(transform(ast.nodes[i] as Rule, config)).toEqual(expectArr[i]);
-  }
-}
+import { transformExpect } from './lib';
 
 describe('align config', () => {
   it('coord and pixel config', () => {
@@ -148,6 +138,41 @@ describe('align config', () => {
         side: {
           type: 'side',
           target: ['a', 'b', 'c', 'd']
+        }
+      }
+    );
+  });
+
+  it('proxy config', () => {
+    transformExpect(
+      `.s1 { x: 5 }`,
+      [
+        {
+          className: 's1',
+          stateSelector: [],
+          partSelector: [],
+          attributes: [
+            { name: 'Y', value: '50', type: 'pixel' }
+          ]
+        }
+      ],
+      {
+        x: {
+          type: 'proxy',
+          proxyConfig: [
+            {
+              type: 'dynamic',
+              transform(decl) {
+                const value = `${parseInt(decl.value) * 10}px`;
+                return [{ name: 'x', value, type: 'dynamic' }];
+              }
+            },
+            'y'
+          ]
+        },
+        y: {
+          type: 'coord',
+          target: 'Y'
         }
       }
     );

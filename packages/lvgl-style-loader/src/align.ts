@@ -141,6 +141,29 @@ function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig
       }
       break;
     }
+    case 'proxy': {
+      let nextDelc = decl.clone();
+      let attributes: StyleItemAttributes;
+      for (const configOrTarget of config.proxyConfig) {
+        if (typeof configOrTarget === 'string') {
+          if (!(configOrTarget in alignConfig)) throw new Error(`proxy config target()${configOrTarget} is not in align config in ${lineInfo}`);
+          nextDelc.prop = configOrTarget;
+          attributes = attributeTransform(nextDelc, { [nextDelc.prop]: alignConfig[configOrTarget] });
+          const [{ name, value }] = attributes;
+          nextDelc = nextDelc.clone();
+          nextDelc.prop = name;
+          nextDelc.value = value;
+        } else {
+          attributes = attributeTransform(nextDelc, { [nextDelc.prop]: configOrTarget });
+          const [{ name, value }] = attributes;
+          nextDelc = nextDelc.clone();
+          nextDelc.prop = name;
+          nextDelc.value = value;
+        }
+      }
+      attributesValue.push(...attributes);
+      break;
+    }
     case 'dynamic': {
       attributesValue = config.transform(decl);
       break;

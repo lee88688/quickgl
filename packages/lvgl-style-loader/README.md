@@ -21,8 +21,8 @@ const lvglStyleLoader = require('lvgl-style-loader');
 - [x] x
 - [x] y
 - [ ] align
-- [ ] transform_width
-- [ ] transform_height
+- [x] transform_width
+- [x] transform_height
 - [ ] translate_x
 - [ ] translate_y
 - [ ] transform_zoom
