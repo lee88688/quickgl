@@ -1,4 +1,5 @@
-import { decl, Declaration } from "postcss";
+import { Declaration } from "postcss";
+import * as constants from '@quickgl/constants';
 import { StyleItemAttributes } from "./align";
 
 /**
@@ -14,6 +15,11 @@ import { StyleItemAttributes } from "./align";
 interface StaticAlignPixelType {
   type: 'pixel';
   target: string;
+}
+
+interface StaticAlignNumberType {
+  type: 'number';
+  target: string
 }
 
 interface StaticAlignPercentType {
@@ -37,6 +43,7 @@ interface StaticAlignColorType {
 interface StaticAlignEnumType {
   type: 'enum';
   target: string;
+  constant?: string;
   enum: string[] | {value: string, mapTo: string}[] | {reg: RegExp, target?: string[]}[];
 }
 
@@ -56,6 +63,7 @@ interface StaticAlignSideType {
 type StaticAlign = 
   | StaticAlignCoordType
   | StaticAlignPixelType
+  | StaticAlignNumberType
   | StaticAlignPercentType
   | StaticAlignColorType
   | StaticAlignEnumType
@@ -162,7 +170,7 @@ export const defaultAttributeAlignConfig: AttributeAlignConfig = {
     enum: [
       { reg: /scaleX\(\s*([\d.]+)\s*\)/, target: ['transform-width-proxy']},
       { reg: /scaleY\(\s*([\d.]+)\s*\)/, target: ['transform-height-proxy']},
-      { reg: /scale\(\s*([\d.]+)\s*, \s*([\d.]+)\s*\)/, target: ['transform-width-proxy', 'transform-height-proxy']},
+      { reg: /scale\(\s*([\d.]+)\s*,\s*([\d.]+)\s*\)/, target: ['transform-width-proxy', 'transform-height-proxy']},
     ]
   },
 
@@ -191,7 +199,78 @@ export const defaultAttributeAlignConfig: AttributeAlignConfig = {
   },
 
   // ----Background----
+  // ----Miscellaneous----
+  // layout
+  display: {
+    type: 'enum',
+    target: 'display',
+    enum: ['flex', 'block'] // block is not the same as css display block
+  },
+  'flex-direction': {
+    type: 'enum',
+    target: 'flex-direction',
+    enum: ['row', 'column', 'row-reverse', 'column-reverse']
+  },
+  'flex-wrap': {
+    type: 'enum',
+    target: 'flex-wrap',
+    enum: ['nowrap', 'wrap']
+  },
+  'justify-content': {
+    type: 'enum',
+    target: 'justify-content',
+    enum: ['start', 'end', 'center', 'evenly', 'space-around', 'space-between']
+  },
+  'align-items': {
+    type: 'enum',
+    target: 'align-items',
+    enum: ['start', 'end', 'center', 'evenly', 'space-around', 'space-between']
+  },
+  'align-content': {
+    type: 'enum',
+    target: 'align-content',
+    enum: ['start', 'end', 'center', 'evenly', 'space-around', 'space-between']
+  },
+  'flex-grow': {
+    type: 'number',
+    target: 'flex-grow'
+  },
+  'flex-merge': {
+    type: 'merge',
+    target: ['display', 'flex-direction', 'flex-wrap', 'justify-content', 'align-items', 'align-content'],
+    transform: flexMergeTransform
+  }
 };
+
+function flexMergeTransform(attributes: StyleItemAttributes): StyleItemAttributes {
+  const map: Record<string, StyleItemAttributes[number]> = {};
+  for (const attr of attributes) {
+    map[attr.name] = attr;
+  }
+  if (!('display' in map) || map.display.value !== 'flex') return [];
+
+  const [direction, reverse] = (map['flex-direction']?.value ?? 'row').split('-');
+  let wrap = map['flex-wrap']?.value ?? 'nowrap';
+  wrap = wrap === 'nowrap' ? '' : wrap;
+  const flexFlow = `LV_FLEX_FLOW_${[direction, wrap, reverse].filter(i => !!i).join('_').toUpperCase()}`;
+
+  const getAlignStr = (s: string) => s.split('-').join('_').toUpperCase();
+
+  const justifyContent = map['justify-content']?.value ?? 'start';
+  const alignItems = map['align-items']?.value ?? 'start';
+  const alignContent = map['align-content']?.value ?? 'start';
+
+  const mainPlaceAlign = `LV_FLEX_ALIGN_${getAlignStr(justifyContent)}`;
+  const crossPlaceAlign = `LV_FLEX_ALIGN_${getAlignStr(alignItems)}`;
+  const trackCrossPlaceAlign = `LV_FLEX_ALIGN_${getAlignStr(alignContent)}`;
+  
+  return [
+    { name: 'LV_STYLE_FLEX_FLOW', value: constants.lvFlexFlow[flexFlow].toString(), type: 'enum' },
+    { name: 'LV_STYLE_FLEX_MAIN_PLACE', value: constants.lvFlexAlign[mainPlaceAlign].toString(), type: 'enum' },
+    { name: 'LV_STYLE_FLEX_CROSS_PLACE', value: constants.lvFlexAlign[crossPlaceAlign].toString(), type: 'enum' },
+    { name: 'LV_STYLE_FLEX_TRACK_PLACE', value: constants.lvFlexAlign[trackCrossPlaceAlign].toString(), type: 'enum' },
+  ];
+}
 
 // export function defaultAlignConfig(): AttributeAlignConfig {
 //   return {
