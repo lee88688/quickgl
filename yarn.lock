@@ -1396,6 +1396,11 @@
   dependencies:
     "@octokit/openapi-types" "^10.2.2"
 
+"@quickgl/constants@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/@quickgl/constants/-/constants-1.0.0.tgz#5a94267dba09d5ebc5a313a4c3f56e146fc3b5e6"
+  integrity sha512-9InwEDBTH9a8RNJqYtc185qTd7z25cMQMQlGfOuq5BLAQisWMs/xWQdrD6NLc05EwAgExFi6vN37er1d+te39Q==
+
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
   resolved "https://registry.npm.taobao.org/@sinonjs/commons/download/@sinonjs/commons-1.8.3.tgz?cache=0&sync_timestamp=1617868496285&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40sinonjs%2Fcommons%2Fdownload%2F%40sinonjs%2Fcommons-1.8.3.tgz#3802ddd21a50a949b6721ddd72da36e67e7f1b2d"

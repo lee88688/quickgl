@@ -219,17 +219,17 @@ export const defaultAttributeAlignConfig: AttributeAlignConfig = {
   'justify-content': {
     type: 'enum',
     target: 'justify-content',
-    enum: ['start', 'end', 'center', 'evenly', 'space-around', 'space-between']
+    enum: ['start', 'end', 'center', 'space-evenly', 'space-around', 'space-between']
   },
   'align-items': {
     type: 'enum',
     target: 'align-items',
-    enum: ['start', 'end', 'center', 'evenly', 'space-around', 'space-between']
+    enum: ['start', 'end', 'center', 'space-evenly', 'space-around', 'space-between']
   },
   'align-content': {
     type: 'enum',
     target: 'align-content',
-    enum: ['start', 'end', 'center', 'evenly', 'space-around', 'space-between']
+    enum: ['start', 'end', 'center', 'space-evenly', 'space-around', 'space-between']
   },
   'flex-grow': {
     type: 'number',
@@ -260,15 +260,17 @@ function flexMergeTransform(attributes: StyleItemAttributes): StyleItemAttribute
   const alignItems = map['align-items']?.value ?? 'start';
   const alignContent = map['align-content']?.value ?? 'start';
 
+  // todo: 如果没有配置默认不添加属性，目前是为了和css属性统一
   const mainPlaceAlign = `LV_FLEX_ALIGN_${getAlignStr(justifyContent)}`;
   const crossPlaceAlign = `LV_FLEX_ALIGN_${getAlignStr(alignItems)}`;
   const trackCrossPlaceAlign = `LV_FLEX_ALIGN_${getAlignStr(alignContent)}`;
-  
+
   return [
-    { name: 'LV_STYLE_FLEX_FLOW', value: constants.lvFlexFlow[flexFlow].toString(), type: 'enum' },
-    { name: 'LV_STYLE_FLEX_MAIN_PLACE', value: constants.lvFlexAlign[mainPlaceAlign].toString(), type: 'enum' },
-    { name: 'LV_STYLE_FLEX_CROSS_PLACE', value: constants.lvFlexAlign[crossPlaceAlign].toString(), type: 'enum' },
-    { name: 'LV_STYLE_FLEX_TRACK_PLACE', value: constants.lvFlexAlign[trackCrossPlaceAlign].toString(), type: 'enum' },
+    { name: 'LAYOUT', value: 'LV_LAYOUT_FLEX', type: 'dynamic' },
+    { name: 'FLEX_FLOW', value: constants.lvFlexFlow[flexFlow].toString(), type: 'dynamic' },
+    { name: 'FLEX_MAIN_PLACE', value: constants.lvFlexAlign[mainPlaceAlign].toString(), type: 'dynamic' },
+    { name: 'FLEX_CROSS_PLACE', value: constants.lvFlexAlign[crossPlaceAlign].toString(), type: 'dynamic' },
+    { name: 'FLEX_TRACK_PLACE', value: constants.lvFlexAlign[trackCrossPlaceAlign].toString(), type: 'dynamic' },
   ];
 }
 

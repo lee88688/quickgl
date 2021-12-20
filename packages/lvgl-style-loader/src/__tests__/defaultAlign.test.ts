@@ -39,10 +39,34 @@ describe('default config', () => {
           stateSelector: [],
           partSelector: [],
           attributes: [
-            { name: 'LV_STYLE_FLEX_FLOW', value: constants.lvFlexFlow.LV_FLEX_FLOW_ROW.toString(), type: 'enum' },
-            { name: 'LV_STYLE_FLEX_MAIN_PLACE', value: constants.lvFlexAlign.LV_FLEX_ALIGN_START.toString(), type: 'enum' },
-            { name: 'LV_STYLE_FLEX_CROSS_PLACE', value: constants.lvFlexAlign.LV_FLEX_ALIGN_START.toString(), type: 'enum' },
-            { name: 'LV_STYLE_FLEX_TRACK_PLACE', value: constants.lvFlexAlign.LV_FLEX_ALIGN_START.toString(), type: 'enum' },
+            { name: 'LAYOUT', value: 'LV_LAYOUT_FLEX', type: 'dynamic' },
+            { name: 'FLEX_FLOW', value: constants.lvFlexFlow.LV_FLEX_FLOW_ROW.toString(), type: 'dynamic' },
+            { name: 'FLEX_MAIN_PLACE', value: constants.lvFlexAlign.LV_FLEX_ALIGN_START.toString(), type: 'dynamic' },
+            { name: 'FLEX_CROSS_PLACE', value: constants.lvFlexAlign.LV_FLEX_ALIGN_START.toString(), type: 'dynamic' },
+            { name: 'FLEX_TRACK_PLACE', value: constants.lvFlexAlign.LV_FLEX_ALIGN_START.toString(), type: 'dynamic' },
+          ]
+        }
+      ],
+      defaultAttributeAlignConfig
+    );
+    
+    // column
+    transformExpect(
+      `.s1 {
+        display: flex;
+        flex-direction: column;
+      }`,
+      [
+        {
+          className: 's1',
+          stateSelector: [],
+          partSelector: [],
+          attributes: [
+            { name: 'LAYOUT', value: 'LV_LAYOUT_FLEX', type: 'dynamic' },
+            { name: 'FLEX_FLOW', value: constants.lvFlexFlow.LV_FLEX_FLOW_COLUMN.toString(), type: 'dynamic' },
+            { name: 'FLEX_MAIN_PLACE', value: constants.lvFlexAlign.LV_FLEX_ALIGN_START.toString(), type: 'dynamic' },
+            { name: 'FLEX_CROSS_PLACE', value: constants.lvFlexAlign.LV_FLEX_ALIGN_START.toString(), type: 'dynamic' },
+            { name: 'FLEX_TRACK_PLACE', value: constants.lvFlexAlign.LV_FLEX_ALIGN_START.toString(), type: 'dynamic' },
           ]
         }
       ],

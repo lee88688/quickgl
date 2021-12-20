@@ -1,4 +1,4 @@
-// import lodash from 'lodash';
+import lodash from 'lodash';
 import { StyleItem } from "./align";
 import { PART_SELECTOR, STATE_SELECTOR, STYLE_PROP } from "./constants";
 
@@ -10,7 +10,7 @@ export function generateCLang(styleItem: StyleItem): string {
 export interface JSStyleItem {
   className: string;
   selector: number;
-  attributes: {name: number, value: number}[];
+  attributes: {name: number | string, value: number | string}[];
 }
 
 function lvPct(x: number): number {
@@ -36,7 +36,7 @@ export function generateJSStyleItem(styleItem: StyleItem): JSStyleItem {
   // attributtes
   for (const attr of styleItem.attributes) {
     const name = `LV_STYLE_${attr.name.toUpperCase()}`;
-    if (!(name in STYLE_PROP)) {
+    if (!name.startsWith('LV_STYLE_FLEX') && !(name in STYLE_PROP)) {
       throw new Error(`className(${styleItem.className})'s attribute(${attr.name}) is not in lvgl style props!`);
     }
     switch(attr.type) {
@@ -62,6 +62,20 @@ export function generateJSStyleItem(styleItem: StyleItem): JSStyleItem {
       }
       case 'enum': {
         continue;
+      }
+      // dynamic for runtime opetations
+      case 'dynamic': {
+        if (name.startsWith('LV_STYLE_FLEX')) {
+          /**
+           * for flex display props, they are registered on runtime.
+           * these props should be replaced to specific value in createLvglStyles.
+           * prop -> s(prop), eg. FLEX_FLOW -> s(FLEX_FLOW)
+           */
+          jsStyleItem.attributes.push({ name: `s(${attr.name})`, value: parseInt(attr.value) });
+        } else if (name === 'LV_STYLE_LAYOUT' && attr.value === 'LV_LAYOUT_FLEX') {
+          jsStyleItem.attributes.push({ name: STYLE_PROP[name], value: `s(${attr.value})` });
+        }
+        break;
       }
     }
   }
