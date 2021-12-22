@@ -23,8 +23,8 @@ const lvglStyleLoader = require('lvgl-style-loader');
 - [ ] align
 - [x] transform_width
 - [x] transform_height
-- [ ] translate_x
-- [ ] translate_y
+- [x] translate_x
+- [x] translate_y
 - [ ] transform_zoom
 - [ ] transform_angle
 
@@ -37,7 +37,7 @@ const lvglStyleLoader = require('lvgl-style-loader');
 - [ ] pad_column
 
 ### Background
-- [ ] bg_color
+- [x] bg_color
 - [ ] bg_opa
 - [ ] bg_grad_color
 - [ ] bg_grad_dir
@@ -50,7 +50,7 @@ const lvglStyleLoader = require('lvgl-style-loader');
 - [ ] bg_img_tiled
 
 ### Border
-- [ ] border_color
+- [x] border_color
 - [ ] border_opa
 - [ ] border_width
 - [ ] border_side
@@ -76,11 +76,11 @@ const lvglStyleLoader = require('lvgl-style-loader');
 - [ ] img_recolor_opa
 
 ### Line
-- [ ] line_width
+- [x] line_width
 - [ ] line_dash_width
 - [ ] line_dash_gap
 - [ ] line_rounded
-- [ ] line_color
+- [x] line_color
 - [ ] line_opa
 
 ### Arc

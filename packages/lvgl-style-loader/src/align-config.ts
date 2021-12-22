@@ -39,6 +39,8 @@ interface StaticAlignColorType {
  * 3. template enum, template is regex one of which css attribute value must match.
  *    if target is provided, the template must has groups, the group value is used for the target in sequence at next step.
  *    if no target is provided, just matched string. 
+ * if constant(@quickgl/constants map variables) is provided, mapTo or enum string will be convert to the map value of constant name, the final type will be
+ * changed to number.
  */
 interface StaticAlignEnumType {
   type: 'enum';
@@ -164,6 +166,14 @@ export const defaultAttributeAlignConfig: AttributeAlignConfig = {
     type: 'proxy',
     proxyConfig: ['transform-width-height-pre', 'transform-height']
   },
+  'translate-x': {
+    type: 'coord',
+    target: 'translate_x'
+  },
+  'translate-y': {
+    type: 'coord',
+    target: 'translate_y'
+  },
   transform: {
     type: 'enum',
     target: 'transform',
@@ -171,6 +181,9 @@ export const defaultAttributeAlignConfig: AttributeAlignConfig = {
       { reg: /scaleX\(\s*([\d.]+)\s*\)/, target: ['transform-width-proxy']},
       { reg: /scaleY\(\s*([\d.]+)\s*\)/, target: ['transform-height-proxy']},
       { reg: /scale\(\s*([\d.]+)\s*,\s*([\d.]+)\s*\)/, target: ['transform-width-proxy', 'transform-height-proxy']},
+      { reg: /translateX\(\s*(.+?)\s*\)/, target: ['translate-x']},
+      { reg: /translateY\(\s*(.+?)\s*\)/, target: ['translate-y']},
+      { reg: /translate\(\s*(.+?)\s*,\s*(.+?)\s*\)/, target: ['translate-x', 'translate-y']},
     ]
   },
 
@@ -199,6 +212,28 @@ export const defaultAttributeAlignConfig: AttributeAlignConfig = {
   },
 
   // ----Background----
+  'background-color': {
+    type: 'color',
+    target: 'bg_color',
+  },
+  // ----Border----
+  'border-color': {
+    type: 'color',
+    target: 'border_color',
+  },
+  'border-width': {
+    type: 'pixel',
+    target: 'border_width',
+  },
+  // ----Line----
+  'line-width': {
+    type: 'pixel',
+    target: 'line_width',
+  },
+  'line-color': {
+    type: 'color',
+    target: 'line_color',
+  },
   // ----Miscellaneous----
   // layout
   display: {

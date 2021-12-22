@@ -4,6 +4,7 @@ import * as Color from 'color';
 import * as selectorPaser from 'postcss-selector-parser';
 import * as valueParser from 'postcss-value-parser';
 import parseSides from 'parse-css-sides';
+import * as constants from '@quickgl/constants';
 import { PART_SELECTOR, STATE_SELECTOR } from './constants';
 import { AttributeAlignConfig, AttributeAlignType } from './align-config';
 
@@ -14,6 +15,12 @@ export interface StyleItem {
   stateSelector: string[];
   partSelector: string[];
   attributes: StyleItemAttributes;
+}
+
+enum StaticAlignEnumValueType {
+  Normal = 1,
+  MapTo,
+  Regex,
 }
 
 function valueFunctionToString(node: valueParser.Node): string {
@@ -52,15 +59,15 @@ function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig
       }
       break;
     }
-    // case 'pixel': {
-    //   const node = getSingleWordNode();
-    //   if (node.value.endsWith('px')) {
-    //     attributesValue = [{value: node.value, name: config.target, type: config.type}];
-    //   } else {
-    //     throw new Error(`unsupported format(${node.value}) in ${lineInfo}`);
-    //   }
-    //   break;
-    // }
+    case 'number': {
+      const node = getSingleWordNode();
+      const value = Number.parseFloat(node.value);
+      if (Number.isNaN(value)) {
+        throw new Error(`unsupported number format(${node.value}) in ${lineInfo}`);
+      }
+      attributesValue = [{ value: value.toString(), name: config.target, type: 'number' }];
+      break;
+    }
     case 'color': {
       const node = getSingleWordNode();
       let color: number[] = [];
@@ -91,15 +98,19 @@ function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig
     }
     case 'enum': {
       const node = getSingleWordNode();
-      const enumType = config.enum.length && typeof config.enum[0] === 'string' ? 1
-        : typeof (config.enum[0] as { value: string }).value === 'string' ? 2
-        : 3;
+      const enumType = config.enum.length && typeof config.enum[0] === 'string' ? StaticAlignEnumValueType.Normal
+        : typeof (config.enum[0] as { value: string }).value === 'string' ? StaticAlignEnumValueType.MapTo
+        : StaticAlignEnumValueType.Regex;
+      const constantName = config.constant;
+      if (constantName && !constants[constantName]) {
+        throw new Error(`constant name(${constantName}) is not in @quickgl/constants at ${decl.prop} config`);
+      }
       let isFound = false;
       let extra: string | {value: string, target: string}[];
 
-      if (enumType === 1) {
+      if (enumType === StaticAlignEnumValueType.Normal) {
         isFound = (config.enum as string[]).includes(node.value);
-      } else if (enumType === 2) {
+      } else if (enumType === StaticAlignEnumValueType.MapTo) {
         isFound = (config.enum as {value: string, mapTo: string}[]).some(({ value, mapTo }) => {
           if (value === node.value) {
             extra = mapTo;
@@ -129,10 +140,16 @@ function attributeTransform(decl: Declaration, alignConfig: AttributeAlignConfig
       if (!isFound) {
         throw new Error(`unkown enum value(${node.value}) for attribute(${decl.prop}) in ${lineInfo}`);
       }
-      if (enumType === 1) {
-        return [{ value: node.value, name: config.target, type: config.type }];
+      const getConstantValue = (value: string): string => {
+        if (!constantName) return value;
+        const constantMap = constants[constantName];
+        if (!constantMap[value]) throw new Error(`constant value(${value}) is not in constant map(${constantName}) in ${lineInfo}`);
+        return constantMap[value].toString();
+      };
+      if (enumType === StaticAlignEnumValueType.Normal) {
+        return [{ value: getConstantValue(node.value), name: config.target, type: config.type }];
       } else if (typeof extra === 'string') {
-        attributesValue = [{ value: extra, name: config.target, type: config.type }];
+        attributesValue = [{ value: getConstantValue(extra), name: config.target, type: config.type }];
       } else {
         extra.forEach(({ value, target }) => {
           const newDecl = decl.clone({ prop: target, value });

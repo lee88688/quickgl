@@ -60,6 +60,10 @@ export function generateJSStyleItem(styleItem: StyleItem): JSStyleItem {
         jsStyleItem.attributes.push({ name: STYLE_PROP[name], value: color });
         continue; 
       }
+      case 'number': {
+        jsStyleItem.attributes.push({ name: STYLE_PROP[name], value: Number(attr.value) });
+        break;
+      }
       case 'enum': {
         continue;
       }
