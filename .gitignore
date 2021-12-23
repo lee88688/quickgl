@@ -6,3 +6,6 @@ lib/
 .idea/
 
 tsconfig.tsbuildinfo
+
+yalc.lock
+.yalc
