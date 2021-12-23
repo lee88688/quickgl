@@ -1,6 +1,6 @@
 {
   "name": "@quickgl/lvgl-style-loader",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "convert css to lvgl style struct",
   "author": "lee <lee88688@163.com>",
   "homepage": "",
@@ -13,6 +13,10 @@
   "files": [
     "lib"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lee88688/quickgl.git"
+  },
   "scripts": {
     "test": "jest",
     "build": "tsc"
@@ -31,5 +35,8 @@
   "devDependencies": {
     "@types/color": "^3.0.2",
     "webpack": "^5.53.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

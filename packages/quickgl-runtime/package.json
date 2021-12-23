@@ -1,6 +1,6 @@
 {
   "name": "@quickgl/runtime",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "quickgl runtime",
   "keywords": [
     "lvgl",
@@ -37,5 +37,8 @@
   "devDependencies": {
     "@quickgl/types": "^0.1.0",
     "@types/react-reconciler": "^0.26.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

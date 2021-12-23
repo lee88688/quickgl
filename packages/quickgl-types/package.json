@@ -10,9 +10,6 @@
   "files": [
     "lib"
   ],
-  "publishConfig": {
-    "registry": "https://registry.npm.taobao.org/"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lee88688/quickgl.git"
@@ -25,5 +22,8 @@
   },
   "bugs": {
     "url": "https://github.com/lee88688/quickgl/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
