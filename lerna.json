@@ -1,4 +1,9 @@
 {
+  "command": {
+    "publish": {
+      "private": false
+    }
+  },
   "packages": [
     "packages/*"
   ],

@@ -1,6 +1,6 @@
 {
   "name": "@quickgl/lvgl-style-loader",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "convert css to lvgl style struct",
   "author": "lee <lee88688@163.com>",
   "homepage": "",
